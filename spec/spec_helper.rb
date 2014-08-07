@@ -1,3 +1,5 @@
+require "safe_monkeypatch"
+
 RSpec.configure do |config|
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
@@ -6,7 +8,6 @@ RSpec.configure do |config|
     config.default_formatter = 'doc'
   end
 
-  config.profile_examples = 10
   config.order = :random
   Kernel.srand config.seed
 
