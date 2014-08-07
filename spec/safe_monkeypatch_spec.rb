@@ -61,7 +61,16 @@ RSpec.describe SafeMonkeypatch do
       end
     }.to raise_error(
       SafeMonkeypatch::UpstreamChanged,
-      /Foo#bar expected to have md5 expected: 'invalid_checksum', but has: 'b1c5ef3149e6e0062e1c21c3ce8af7d8'/
+      /Foo#bar expected to have md5 expected: 'invalid_checksum', but has: '#{MD5_CHECKSUM}'/
+    )
+  end
+
+  it "accepts custom UnboundMethod" do
+    expect {
+      safe_monkeypatch Foo.instance_method(:bar), md5: 'another_checksum'
+    }.to raise_error(
+      SafeMonkeypatch::UpstreamChanged,
+      /Foo#bar expected to have md5 expected: 'another_checksum', but has: '#{MD5_CHECKSUM}'/
     )
   end
 end
