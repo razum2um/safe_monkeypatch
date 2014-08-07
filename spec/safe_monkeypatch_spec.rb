@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 MD5_CHECKSUM = 'b1c5ef3149e6e0062e1c21c3ce8af7d8'
+SHA1_CHECKSUM = '31c701df5f245ac40a1f8cc958c77e4c4fa815df'
 
 RSpec.describe SafeMonkeypatch do
   subject { Foo.new }
@@ -13,7 +14,7 @@ RSpec.describe SafeMonkeypatch do
     end
   end
 
-  it "works as usual" do
+  it "works" do
     class Foo
       safe_monkeypatch :bar, md5: MD5_CHECKSUM
 
@@ -72,6 +73,51 @@ RSpec.describe SafeMonkeypatch do
       SafeMonkeypatch::UpstreamChanged,
       /Foo#bar expected to have md5 expected: "another_checksum", but has: "#{MD5_CHECKSUM}"/
     )
+  end
+
+  describe "multiple cyphers" do
+    it "works" do
+      class Foo
+        safe_monkeypatch :bar, md5: MD5_CHECKSUM, sha1: SHA1_CHECKSUM
+
+        def bar
+          "patched bar"
+        end
+      end
+
+      expect(subject.bar).to eq "patched bar"
+    end
+
+    it "fails if some cypher is invalid" do
+      expect {
+        class Foo
+          safe_monkeypatch :bar, md5: MD5_CHECKSUM, sha1: 'invalid'
+
+          def bar
+            "patched bar"
+          end
+        end
+      }.to raise_error(
+        SafeMonkeypatch::UpstreamChanged,
+        /Foo#bar expected to have sha1 expected: "invalid", but has: "#{SHA1_CHECKSUM}"/
+      )
+    end
+
+    it "works with mutlipatch" do
+      expect(Kernel).to receive(:puts).once
+
+      class Foo
+        safe_monkeypatch :bar, md5: MD5_CHECKSUM, sha1: SHA1_CHECKSUM do
+          Kernel.puts
+
+          def bar
+            "patched bar"
+          end
+        end
+      end
+
+      expect(subject.bar).to eq "patched bar"
+    end
   end
 
   describe "multipatching" do

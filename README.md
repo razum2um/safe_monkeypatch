@@ -12,7 +12,8 @@ since last time you've adapted your patch to the upstream.
 
 ## Simple usage
 
-    # assume some upstream in foo.gem:
+Assume some upstream in foo.gem:
+
     class Foo
       def bar
         puts "do first thing"
@@ -21,11 +22,9 @@ since last time you've adapted your patch to the upstream.
       end
     end
 
-    # your code
-    class Foo
+And your code:
 
-      # you can use any of Digest::*** checksum's methods: sha1, etc.
-      # NOTE: do this BEFORE monkeypatch happens
+    class Foo
       safe_monkeypatch :bar, md5: "", error: "patch for foo.gem v0.0.1"
 
       def bar
@@ -34,6 +33,10 @@ since last time you've adapted your patch to the upstream.
         puts "do something else"
       end
     end
+
+**NOTE:** do this BEFORE monkeypatch happens
+
+You can also use any of Digest::*** checksum's methods: sha1 or even combine md5+sha1
 
 Until upstream code isn't changed, it's working like usual.
 But if the new version changes the implementation of `Foo#bar` method, an

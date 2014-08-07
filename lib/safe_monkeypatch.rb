@@ -36,6 +36,9 @@ class Module
       raise SafeMonkeypatch::ConfigurationError, "Provide at least one cypher name like: md5: '...'"
     end
 
+    found_match = false
+    error_parts = ["#{inspect}##{meth} expected to have"]
+
     options.each do |cypher_name, expected|
       cypher = Digest.const_get(cypher_name.upcase)
       actual = cypher.hexdigest(source)
@@ -45,13 +48,19 @@ class Module
                       actual == expected
                     end
 
-      if block_given? && found_match
-        yield
-      elsif block_given?
-        nil # pass
-      elsif not found_match
-        raise SafeMonkeypatch::UpstreamChanged, "#{inspect}##{meth} expected to have #{cypher_name} expected: #{expected.inspect}, but has: #{actual.inspect}\n#{info}".strip
+      unless found_match
+        error_parts << "#{cypher_name} expected: #{expected.inspect}, but has: #{actual.inspect}"
       end
+    end
+
+    error_parts << info.to_s if info
+
+    if block_given? && found_match
+      yield
+    elsif block_given?
+      nil # pass
+    elsif not found_match
+      raise SafeMonkeypatch::UpstreamChanged, error_parts.join(" ")
     end
   end
 end
