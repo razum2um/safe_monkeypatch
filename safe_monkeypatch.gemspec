@@ -1,11 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'safe_monkeypatch/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "safe_monkeypatch"
-  spec.version       = SafeMonkeypatch::VERSION
+  spec.version       = "0.0.1"
   spec.authors       = ["Vlad Bokov"]
   spec.email         = ["razum2um@mail.ru"]
   spec.summary       = %q{Patch methods without fear!}

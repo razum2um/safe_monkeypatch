@@ -1,6 +1,5 @@
 require "digest"
 require "method_source"
-require "safe_monkeypatch/version"
 
 module SafeMonkeypatch
   class UpstreamChanged < StandardError
