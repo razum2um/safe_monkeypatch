@@ -67,7 +67,7 @@ RSpec.describe SafeMonkeypatch do
 
   it "accepts custom UnboundMethod" do
     expect {
-      safe_monkeypatch Foo.instance_method(:bar), md5: 'another_checksum'
+      Foo.safe_monkeypatch Foo.instance_method(:bar), md5: 'another_checksum'
     }.to raise_error(
       SafeMonkeypatch::UpstreamChanged,
       /Foo#bar expected to have md5 expected: 'another_checksum', but has: '#{MD5_CHECKSUM}'/

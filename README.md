@@ -43,9 +43,9 @@ error is raised **while startup time**
     SafeMonkeypatch::UpstreamChanged: Foo#bar expected to have md5 checksum: "", but has: ""
     my additional info for exception
 
-You can also use it without patched module scope:
+You can also use it without patched module scope (for proper error use patched class/module name):
 
-    safe_monkeypatch Foo.instance_method(:bar), md5: 'invalid_checksum'
+    Foo.safe_monkeypatch Foo.instance_method(:bar), md5: 'invalid_checksum'
 
 Happy monkeypatching :)
 

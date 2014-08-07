@@ -2,6 +2,8 @@ require "digest"
 require "method_source"
 
 module SafeMonkeypatch
+  extend self
+
   class UpstreamChanged < StandardError
   end
 
@@ -19,6 +21,7 @@ class Module
 
     if meth.is_a? UnboundMethod
       method = meth
+      meth = method.name
     else
       begin
         method = instance_method(meth)
@@ -41,6 +44,4 @@ class Module
     end
   end
 end
-
-# Module.send :include, SafeMonkeypatch
 
