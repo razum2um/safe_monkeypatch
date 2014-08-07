@@ -10,7 +10,7 @@ it's gonna break in the next version of Rails. This gem
 would raise an error if monkey patched method has changed
 since last time you've adapted your patch to the upstream.
 
-## Usage
+## Simple usage
 
     # assume some upstream in foo.gem:
     class Foo
@@ -26,7 +26,7 @@ since last time you've adapted your patch to the upstream.
 
       # you can use any of Digest::*** checksum's methods: sha1, etc.
       # NOTE: do this BEFORE monkeypatch happens
-      safe_monkeypatch :bar, md5: "", error: "my additional info for exception"
+      safe_monkeypatch :bar, md5: "", error: "patch for foo.gem v0.0.1"
 
       def bar
         puts "do first thing"
@@ -41,7 +41,54 @@ error is raised **while startup time**
 (unless you monkeypatch in runtime, but now you're on your own):
 
     SafeMonkeypatch::UpstreamChanged: Foo#bar expected to have md5 checksum: "", but has: ""
-    my additional info for exception
+    patch for foo.gem v0.0.1
+
+## Matching usage
+
+Unfortunately, if you have to support different versions of `foo.gem`, you have to monkeypatch all the
+variant implementation. Use blocks for this:
+
+    class Foo
+      safe_monkeypatch :bar, md5: 'some_checksum' do
+        def bar
+          "this works if upstream Foo#bar method has md5 of source equals 'some_checksum'
+        end
+      end
+
+      safe_monkeypatch :bar, md5: 'another_checksum' do
+        def bar
+          "another patch"
+          "this works if upstream Foo#bar method has md5 of source equals 'another_checksum'
+        end
+      end
+    end
+
+**Note:** if source of upstream change dramatically and you haven't such matching checksum,
+**you won't notice this**, as such use this method:
+
+    class Foo
+
+      # NOTE: insert this BEFORE ANY monkeypatch: list all checksum variants
+      safe_monkeypatch :bar, md5: ['some_checksum', 'another_checksum']
+
+      safe_monkeypatch :bar, md5: 'some_checksum' do
+        def bar
+          "this works if upstream Foo#bar method has md5 of source equals 'some_checksum'
+        end
+      end
+
+      safe_monkeypatch :bar, md5: 'another_checksum' do
+        def bar
+          "another patch"
+          "this works if upstream Foo#bar method has md5 of source equals 'another_checksum'
+        end
+      end
+    end
+
+Use block matching **always this way**. This will guarantee, that any of patches will be applied,
+or you'll get standard exception.
+
+## Advanced usage
 
 You can also use it without patched module scope (for proper error use patched class/module name):
 

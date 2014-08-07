@@ -61,7 +61,7 @@ RSpec.describe SafeMonkeypatch do
       end
     }.to raise_error(
       SafeMonkeypatch::UpstreamChanged,
-      /Foo#bar expected to have md5 expected: 'invalid_checksum', but has: '#{MD5_CHECKSUM}'/
+      /Foo#bar expected to have md5 expected: "invalid_checksum", but has: "#{MD5_CHECKSUM}"/
     )
   end
 
@@ -70,7 +70,68 @@ RSpec.describe SafeMonkeypatch do
       Foo.safe_monkeypatch Foo.instance_method(:bar), md5: 'another_checksum'
     }.to raise_error(
       SafeMonkeypatch::UpstreamChanged,
-      /Foo#bar expected to have md5 expected: 'another_checksum', but has: '#{MD5_CHECKSUM}'/
+      /Foo#bar expected to have md5 expected: "another_checksum", but has: "#{MD5_CHECKSUM}"/
     )
+  end
+
+  describe "multipatching" do
+    it "works" do
+      class Foo
+        safe_monkeypatch :bar, md5: 'invalid_checksum' do
+          def bar
+            "invalid patch"
+          end
+        end
+
+        safe_monkeypatch :bar, md5: MD5_CHECKSUM do
+          def bar
+            "patched bar"
+          end
+        end
+
+        safe_monkeypatch :bar, md5: 'another_checksum' do
+          def bar
+            "another patch"
+          end
+        end
+      end
+
+      expect(subject.bar).to eq "patched bar"
+    end
+
+    it "doesn't complain if no matching block found" do
+      class Foo
+        safe_monkeypatch :bar, md5: 'invalid_checksum' do
+          def bar
+            "invalid patch"
+          end
+        end
+      end
+
+      expect(subject.bar).to eq "bar"
+    end
+
+    it "complains if no matching block found if array given" do
+      expect {
+        class Foo
+          safe_monkeypatch :bar, md5: ['invalid_checksum', 'another_checksum']
+
+          safe_monkeypatch :bar, md5: 'invalid_checksum' do
+            def bar
+              "invalid patch"
+            end
+          end
+
+          safe_monkeypatch :bar, md5: 'another_checksum' do
+            def bar
+              "invalid patch"
+            end
+          end
+        end
+      }.to raise_error(
+        SafeMonkeypatch::UpstreamChanged,
+        /Foo#bar expected to have md5 expected: \["invalid_checksum", "another_checksum"\], but has: "#{MD5_CHECKSUM}"/
+      )
+    end
   end
 end

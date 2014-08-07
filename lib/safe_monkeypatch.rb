@@ -38,8 +38,19 @@ class Module
 
     options.each do |cypher_name, expected|
       cypher = Digest.const_get(cypher_name.upcase)
-      if (actual = cypher.hexdigest(source)) != expected
-        raise SafeMonkeypatch::UpstreamChanged, "#{inspect}##{meth} expected to have #{cypher_name} expected: '#{expected}', but has: '#{actual}'\n#{info}".strip
+      actual = cypher.hexdigest(source)
+      found_match = if expected.is_a? Array
+                      expected.any? { |e| e == actual }
+                    else
+                      actual == expected
+                    end
+
+      if block_given? && found_match
+        yield
+      elsif block_given?
+        nil # pass
+      elsif not found_match
+        raise SafeMonkeypatch::UpstreamChanged, "#{inspect}##{meth} expected to have #{cypher_name} expected: #{expected.inspect}, but has: #{actual.inspect}\n#{info}".strip
       end
     end
   end
