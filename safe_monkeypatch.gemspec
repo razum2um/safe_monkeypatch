@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "safe_monkeypatch"
-  spec.version       = "0.0.1"
+  spec.version       = "0.1.0"
   spec.authors       = ["Vlad Bokov"]
   spec.email         = ["razum2um@mail.ru"]
   spec.summary       = %q{Patch methods without fear!}
