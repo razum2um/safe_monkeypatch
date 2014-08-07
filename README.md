@@ -43,6 +43,10 @@ error is raised **while startup time**
     SafeMonkeypatch::UpstreamChanged: Foo#bar expected to have md5 checksum: "", but has: ""
     my additional info for exception
 
+You can also use it without patched module scope:
+
+    safe_monkeypatch Foo.instance_method(:bar), md5: 'invalid_checksum'
+
 Happy monkeypatching :)
 
 [Gem Version]: https://rubygems.org/gems/safe_monkeypatch

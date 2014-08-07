@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = SafeMonkeypatch::VERSION
   spec.authors       = ["Vlad Bokov"]
   spec.email         = ["razum2um@mail.ru"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Patch methods without fear!}
+  spec.description   = %q{Checksums method source and raises if upstream has changed.}
+  spec.homepage      = "https://github.com/razum2um/safe_monkeypatch"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
