@@ -57,7 +57,6 @@ variant implementation. Use blocks for this:
 
       safe_monkeypatch :bar, md5: 'another_checksum' do
         def bar
-          "another patch"
           "this works if upstream Foo#bar method has md5 of source equals 'another_checksum'
         end
       end
