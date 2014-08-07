@@ -1,5 +1,8 @@
 # SafeMonkeypatch
 
+[![Gem Version][GV img]][Gem Version]
+[![Build Status][BS img]][Build Status]
+
 **If you can, please, DO NOT monkeypatch.**
 
 Sometimes I patch ActiveRecord, but ain't sure if
@@ -34,10 +37,16 @@ since last time you've adapted your patch to the upstream.
 
 Until upstream code isn't changed, it's working like usual.
 But if the new version changes the implementation of `Foo#bar` method, an
-error is raised **while startup time** (not in runtime):
+error is raised **while startup time**
+(unless you monkeypatch in runtime, but now you're on your own):
 
     SafeMonkeypatch::UpstreamChanged: Foo#bar expected to have md5 checksum: "", but has: ""
     my additional info for exception
 
 Happy monkeypatching :)
 
+[Gem Version]: https://rubygems.org/gems/safe_monkeypatch
+[Build Status]: https://travis-ci.org/razum2um/safe_monkeypatch
+
+[GV img]: https://badge.fury.io/rb/safe_monkeypatch.png
+[BS img]: https://travis-ci.org/razum2um/safe_monkeypatch.png
